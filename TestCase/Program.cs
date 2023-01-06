@@ -1,7 +1,7 @@
 ﻿using DocumentFormat.OpenXml.Spreadsheet;
 using ClosedXML.Excel;
+using TestCase.Models;
 using TestCase.ExcelHelper;
-
 
 namespace TestCase
 {
@@ -10,23 +10,47 @@ namespace TestCase
         static void Main(string[] args)
         {
             var path = "тестовые данные.xlsx";
-            var book = new XLWorkbook(path);
-            var sheet = book.Worksheet("Лист1");
-            var fistColumnNumber = sheet.FirstColumnUsed().ColumnNumber();
-            var lastColumnNumber = sheet.LastColumnUsed().ColumnNumber();
-            var firstRowNumber = sheet.FirstRowUsed().RowNumber();
-            var lastRowNumber = sheet.LastRowUsed().RowNumber();
+            var currentSheet = "Лист1";
+            var provider = new ExcelProvider();
+            var sheet = provider.ConnectorToWorkSheet(path, currentSheet);
 
-            var range = sheet.Range(firstRowNumber, fistColumnNumber, lastRowNumber, lastColumnNumber);
-            var cells = range.Cells();
-            foreach (var cell in cells)
+            var cellsUsed = sheet.CellsUsed();
+            var range = sheet.Range(sheet.FirstRowUsed().RowNumber(),
+                sheet.FirstColumnUsed().ColumnNumber(), sheet.LastRowUsed().RowNumber(),
+                sheet.FirstColumnUsed().ColumnNumber());
+
+            var buisnessProcess = new BuisnessModel(new List<ProcessModel>());
+            foreach (var xlCell in cellsUsed)
             {
-                Console.WriteLine(cell.GetString());
-                if (cell.GetString() == ProcessOwner.CORP.ToString())
-                {
-                    int corp = (int) ProcessOwner.CORP;
-                }
+                Console.WriteLine(xlCell.GetString());
             }
+
+            var listProcess = new List<ProcessModel>();
+
+            //TODO: Исправить получение данных из документа
+            foreach (var cell in cellsUsed)
+            {
+                string codeName = null;
+                string processName = null;
+                List<string> ownerName = new List<string>();
+                if (cell.Address == range)
+                {
+                    codeName= cell.GetString();
+                }
+
+                if (cell.Address == range)
+                {
+                    processName = cell.GetString();
+                }
+
+                if (cell.Address == range)
+                {
+                    ownerName.Add(cell.GetString());
+                }
+
+                
+            }
+            buisnessProcess.Buisnesses.AddRange(new List<ProcessModel>());
         }
     }
 }
