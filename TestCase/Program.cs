@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
+﻿using System.Collections;
+using DocumentFormat.OpenXml.Spreadsheet;
 using ClosedXML.Excel;
 using TestCase.Models;
 using TestCase.ExcelHelper;
@@ -9,48 +10,41 @@ namespace TestCase
     {
         static void Main(string[] args)
         {
-            var path = "тестовые данные.xlsx";
-            var currentSheet = "Лист1";
+            const string path = "тестовые данные.xlsx";
+            const string currentSheet = "Лист1";
+            var titles = new List<string>()
+            {
+                "Код\r\nпроцесса", 
+                "Наименование процесса", 
+                "Подразделение \r\nВладелец процесса"
+            };
+
             var provider = new ExcelProvider();
             var sheet = provider.ConnectorToWorkSheet(path, currentSheet);
-
             var cellsUsed = sheet.CellsUsed();
-            var range = sheet.Range(sheet.FirstRowUsed().RowNumber(),
-                sheet.FirstColumnUsed().ColumnNumber(), sheet.LastRowUsed().RowNumber(),
-                sheet.FirstColumnUsed().ColumnNumber());
+            var companyTable = provider.GetTable(sheet);
+            var ext = new ExcelExtractor().Extractor(companyTable,titles);
 
-            var buisnessProcess = new BuisnessModel(new List<ProcessModel>());
-            foreach (var xlCell in cellsUsed)
+
+            for (int i = 0; i < ext.Code.Count; i++)
             {
-                Console.WriteLine(xlCell.GetString());
+                Console.Write(ext.Code[i] + " ");
+                Console.Write(ext.Name[i] + " ");
+                Console.Write(ext.Owner[i]);
+                Console.WriteLine();
             }
 
-            var listProcess = new List<ProcessModel>();
+            //var range = sheet.Range(sheet.FirstRowUsed().RowNumber(),
+            //    sheet.FirstColumnUsed().ColumnNumber(), sheet.LastRowUsed().RowNumber(),
+            //    sheet.FirstColumnUsed().ColumnNumber());
 
-            //TODO: Исправить получение данных из документа
-            foreach (var cell in cellsUsed)
-            {
-                string codeName = null;
-                string processName = null;
-                List<string> ownerName = new List<string>();
-                if (cell.Address == range)
-                {
-                    codeName= cell.GetString();
-                }
+            //var buisnessProcess = new BuisnessModel(new List<ProcessModel>());
 
-                if (cell.Address == range)
-                {
-                    processName = cell.GetString();
-                }
-
-                if (cell.Address == range)
-                {
-                    ownerName.Add(cell.GetString());
-                }
-
-                
-            }
-            buisnessProcess.Buisnesses.AddRange(new List<ProcessModel>());
+            //foreach (var xlCell in companyTable.Cells())
+            //{
+            //    Console.WriteLine(xlCell.Address);
+            //    Console.WriteLine(xlCell.GetString());
+            //}
         }
     }
 }
