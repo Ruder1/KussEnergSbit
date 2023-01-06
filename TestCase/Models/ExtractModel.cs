@@ -10,7 +10,7 @@ namespace TestCase.Models
     {
         
         public List<string>? Code { get; set; }
-        public List<string>? Name { get; set; }
+        public List<string>? Process { get; set; }
         public List<string>? Owner { get; set; }
 
     }

@@ -20,17 +20,7 @@ namespace TestCase.Models
         StrategyCompetencyCenter
 
     }
-
-    public class BuisnessModel
-    {
-        public BuisnessModel(List<ProcessModel> buisnesses)
-        {
-            Buisnesses = buisnesses;
-        }
-
-        public List<ProcessModel> Buisnesses { get; set; }
-    }
-
+    
     public class ProcessModel
     {
 
@@ -39,6 +29,10 @@ namespace TestCase.Models
             this.CodeName = codeName;
             this.ProcessName = processName;
             this.OwnerName = ownerName;
+        }
+
+        public ProcessModel()
+        {
         }
 
         public string? CodeName { get; set; }

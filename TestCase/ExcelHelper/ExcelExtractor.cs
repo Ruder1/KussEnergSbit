@@ -25,7 +25,7 @@ namespace TestCase.ExcelHelper
                 Code = companyTable.DataRange.Rows()
                     .Select(companyRow => companyRow.Field(titles[0]).GetString())
                     .ToList(),
-                Name = companyTable.DataRange.Rows()
+                Process = companyTable.DataRange.Rows()
                     .Select(companyRow => companyRow.Field(titles[1]).GetString())
                     .ToList(),
                 Owner = companyTable.DataRange.Rows()
