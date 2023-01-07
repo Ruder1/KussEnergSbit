@@ -4,12 +4,15 @@ using ClosedXML.Excel;
 using TestCase.DataConvertor;
 using TestCase.Models;
 using TestCase.ExcelHelper;
+using System.Data.SqlClient;
+using System.Data;
+using TestCase.DataLoader;
 
 namespace TestCase
 {
     public class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             const string fileName = "тестовые данные.xlsx";
             const string currentSheet = "Лист1";
@@ -30,25 +33,87 @@ namespace TestCase
 
             var sorted = new TransformData().MatchingRows(ext);
 
-            for (int i = 0; i < ext.Code.Count; i++)
+            using (BuisnessTestContext db = new BuisnessTestContext())
             {
-                Console.Write(ext.Code[i] + " ");
-                Console.Write(ext.Process[i] + " ");
-                Console.Write(ext.Owner[i]);
-                Console.WriteLine();
+
+                var buisnessProcess = db.BuisnessProcesses.ToList();
+                foreach (var buisness in buisnessProcess)
+                {
+                    Console.Write($"{buisness.CodeId} ");
+                    //Console.WriteLine(buisness.Code.CodeName);
+                    Console.Write($"{buisness.ProcessId} ");
+                    Console.WriteLine(buisness.OwnerId);
+                }
             }
 
-            //var range = sheet.Range(sheet.FirstRowUsed().RowNumber(),
-            //    sheet.FirstColumnUsed().ColumnNumber(), sheet.LastRowUsed().RowNumber(),
-            //    sheet.FirstColumnUsed().ColumnNumber());
-
-            //var buisnessProcess = new BuisnessModel(new List<ProcessModel>());
-
-            //foreach (var xlCell in companyTable.Cells())
+            //foreach (var data in sorted)
             //{
-            //    Console.WriteLine(xlCell.Address);
-            //    Console.WriteLine(xlCell.GetString());
+            //    Console.Write(data.CodeName + " ");
+            //    Console.Write(data.ProcessName + " ");
+            //    foreach (var owner in data.OwnerName)
+            //    {
+            //        Console.Write($"{owner} ");
+            //    }
+
+            //    Console.WriteLine();
             //}
+
+        }
+
+        static async Task ConnectToServer()
+        {
+            string connectionString = "Server=(localdb)\\mssqllocaldb;Database=BuisnessTest;Trusted_Connection=True;";
+            string sqlExpression = @"SELECT CodeProcess.CodeName, Process.ProcessName, OwnerProcess.OwnerName
+            From BuisnessProcess, CodeProcess,Process, OwnerProcess
+            WHERE CodeProcess.ID = BuisnessProcess.CodeId AND Process.ID = BuisnessProcess.ProcessId  AND OwnerProcess.Id = BuisnessProcess.OwnerId
+            AND CodeProcess.CodeName BETWEEN 'A1' AND 'A2' AND NOT CodeProcess.CodeName = 'A2'";
+            // Создание подключения
+            using SqlConnection connection = new SqlConnection(connectionString);
+            {
+                try
+                {
+                    // Открываем подключение
+                    await connection.OpenAsync();
+                    SqlCommand command = new SqlCommand(sqlExpression, connection);
+                    SqlDataReader reader = await command.ExecuteReaderAsync();
+
+                    if (reader.HasRows) // если есть данные
+                    {
+                        // выводим названия столбцов
+                        string columnName1 = reader.GetName(0);
+                        string columnName2 = reader.GetName(1);
+                        string columnName3 = reader.GetName(2);
+                       
+
+                        Console.WriteLine($"{columnName1}\t {columnName2} \t{columnName3}");
+
+                        while (await reader.ReadAsync()) // построчно считываем данные
+                        {
+                            var code = reader.GetString(0);
+                            var name = reader.GetString(1);
+                            var owner = reader.GetValue(2);
+                            Console.WriteLine($"{code} \t{name} \t {owner}");
+                        }
+                    }
+                    await reader.CloseAsync();
+                }
+                catch (SqlException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                finally
+                {
+                    // если подключение открыто
+                    if (connection.State == ConnectionState.Open)
+                    {
+                        // закрываем подключение
+                        await connection.CloseAsync();
+                        Console.WriteLine("Подключение закрыто...");
+                    }
+                }
+            }
+            Console.WriteLine("Программа завершила работу.");
+            Console.Read();
         }
     }
 }
