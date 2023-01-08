@@ -11,6 +11,11 @@ namespace TestCase.DataLoader;
 /// </summary>
 public partial class BuisnessTestContext : DbContext
 {
+    /// <summary>
+    /// Строка для подключения к базе данных
+    /// </summary>
+    private const string ConnectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=BuisnessTest";
+
     public BuisnessTestContext()
     {
     }
@@ -28,8 +33,12 @@ public partial class BuisnessTestContext : DbContext
 
     public virtual DbSet<Process> Processes { get; set; }
 
+    /// <summary>
+    /// Подключение к базе данных
+    /// </summary>
+    /// <param name="optionsBuilder">Параметры для подключения</param>
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=BuisnessTest");
+        => optionsBuilder.UseSqlServer(ConnectionString);
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

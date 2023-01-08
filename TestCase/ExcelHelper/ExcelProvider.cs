@@ -18,9 +18,18 @@ namespace TestCase.ExcelHelper
         /// <returns>Возвращает лист с которым будем работать</returns>
         public IXLWorksheet ConnectorToWorkSheet(string path, string currentSheet)
         {
-            var book = new XLWorkbook(path);
-            var sheet = book.Worksheet(currentSheet);
-            return sheet;
+            try
+            {
+                var book = new XLWorkbook(path);
+                var sheet = book.Worksheet(currentSheet);
+                Console.WriteLine($"Успешное подключение к файлу {path}");
+                return sheet;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
         }
 
         /// <summary>
@@ -30,8 +39,17 @@ namespace TestCase.ExcelHelper
         /// <returns>Возвращает все используемые ячейки</returns>
         public IXLCells GetCells(IXLWorksheet sheet)
         {
-            var cells = sheet.CellsUsed();
-            return cells;
+            try
+            {
+                var cells = sheet.CellsUsed();
+                Console.WriteLine($"Успешное получение используемых ячеек");
+                return cells;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
 
         }
 

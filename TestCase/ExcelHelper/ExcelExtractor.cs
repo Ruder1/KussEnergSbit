@@ -18,22 +18,30 @@ namespace TestCase.ExcelHelper
         /// </summary>
         /// <param name="companyTable"></param>
         /// <returns>Возвращает связанные между собой извлеченные данные</returns>
-        public ExtractData Extractor(IXLTable companyTable,List<string> titles)
+        public ExtractData Extractor(IXLTable companyTable, List<string> titles)
         {
-            var ext = new ExtractData
+            try
             {
-                Code = companyTable.DataRange.Rows()
-                    .Select(companyRow => companyRow.Field(titles[0]).GetString())
-                    .ToList(),
-                Process = companyTable.DataRange.Rows()
-                    .Select(companyRow => companyRow.Field(titles[1]).GetString())
-                    .ToList(),
-                Owner = companyTable.DataRange.Rows()
-                    .Select(companyRow => companyRow.Field(titles[2]).GetString())
-                    .ToList()
-            };
-
-            return ext;
+                var ext = new ExtractData
+                {
+                    Code = companyTable.DataRange.Rows()
+                        .Select(companyRow => companyRow.Field(titles[0]).GetString())
+                        .ToList(),
+                    Process = companyTable.DataRange.Rows()
+                        .Select(companyRow => companyRow.Field(titles[1]).GetString())
+                        .ToList(),
+                    Owner = companyTable.DataRange.Rows()
+                        .Select(companyRow => companyRow.Field(titles[2]).GetString())
+                        .ToList()
+                };
+                Console.WriteLine("Успешное извлечение данных из файла .xlsx");
+                return ext;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
         }
     }
 }

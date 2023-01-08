@@ -19,37 +19,46 @@ namespace TestCase.DataConvertor
         /// <returns>Возвращает список соотнесенных между собой данных из файла .xlsx</returns>
         public List<ProcessModel> MatchingRows(ExtractData extract)
         {
-            var processList = new List<ProcessModel>();
-            
-            for (int i = 0; i < extract.Code.Count; i++)
+            try
             {
-                var process = new ProcessModel(null,null,new List<string>());
+                var processList = new List<ProcessModel>();
 
-                //Если пустые строки под заголовка Кода и подразделения процесса
-                if (extract.Code[i] == "" && extract.Process[i] != "")
+                for (int i = 0; i < extract.Code.Count; i++)
                 {
-                    process.ProcessName = extract.Process[i];
-                    process.CodeName = extract.Code[i];
-                    process.OwnerName.Add(extract.Owner[i]);
-                    processList.Add(process);
-                }
+                    var process = new ProcessModel(null, null, new List<string>());
 
-                //Если все строкие не пустые
-                if (extract.Code[i] != "" && extract.Process[i] != "" && extract.Owner[i] != null)
-                {
-                    process.ProcessName = extract.Process[i];
-                    process.CodeName = extract.Code[i];
-                    process.OwnerName.Add(extract.Owner[i]);
-                    processList.Add(process);
+                    //Если пустые строки под заголовка Кода и подразделения процесса
+                    if (extract.Code[i] == "" && extract.Process[i] != "")
+                    {
+                        process.ProcessName = extract.Process[i];
+                        process.CodeName = extract.Code[i];
+                        process.OwnerName.Add(extract.Owner[i]);
+                        processList.Add(process);
+                    }
+
+                    //Если все строкие не пустые
+                    if (extract.Code[i] != "" && extract.Process[i] != "" && extract.Owner[i] != null)
+                    {
+                        process.ProcessName = extract.Process[i];
+                        process.CodeName = extract.Code[i];
+                        process.OwnerName.Add(extract.Owner[i]);
+                        processList.Add(process);
+                    }
+
+                    //Если у процесса есть несколько подразделений
+                    if (extract.Code[i] == "" && extract.Process[i] == "" && extract.Owner[i] != null)
+                    {
+                        processList[^1].OwnerName.Add(extract.Owner[i]);
+                    }
                 }
-                //Если у процесса есть несколько подразделений
-                if (extract.Code[i] == "" && extract.Process[i] == "" && extract.Owner[i] != null)
-                {
-                   processList[^1].OwnerName.Add(extract.Owner[i]);
-                }
+                Console.WriteLine("Успешное соотношение выгруженных данных из файла .xlsx");
+                return processList;
             }
-            
-            return processList;
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
         }
     }
 }

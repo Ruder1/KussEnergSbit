@@ -19,54 +19,62 @@ namespace TestCase.DataLoader
         /// <param name="dataList">Список данных для установления связи</param>
         public void AddRelationMTM(List<ProcessModel> dataList)
         {
-            using (BuisnessTestContext db = new BuisnessTestContext())
+            try
             {
-                foreach (var data in dataList)
+                using (BuisnessTestContext db = new BuisnessTestContext())
                 {
-                    if (data.CodeName != "")
+                    foreach (var data in dataList)
                     {
-                        var codeId = db.CodeProcesses.ToList().
-                            Find(process => process.CodeName == data.CodeName)!.Id;
-                        var processId = db.Processes.ToList().
-                            Find(process => process.ProcessName == data.ProcessName)!.Id;
-
-                        foreach (var division in data.OwnerName)
+                        if (data.CodeName != "")
                         {
-                            var ownerId = db.OwnerProcesses.ToList().
-                                Find(owner => owner.OwnerName == division)!.Id;
+                            var codeId = db.CodeProcesses.ToList().Find(process => process.CodeName == data.CodeName)!
+                                .Id;
+                            var processId = db.Processes.ToList()
+                                .Find(process => process.ProcessName == data.ProcessName)!.Id;
 
-                            //Сопоставляем данные в промежуточную таблицу
-                            BuisnessProcess business = new BuisnessProcess
+                            foreach (var division in data.OwnerName)
                             {
-                                CodeId = codeId,
-                                ProcessId = processId,
-                                OwnerId = ownerId
-                            };
+                                var ownerId = db.OwnerProcesses.ToList().Find(owner => owner.OwnerName == division)!.Id;
 
-                            var dbBusiness = db.BuisnessProcesses.ToList();
+                                //Сопоставляем данные в промежуточную таблицу
+                                BuisnessProcess business = new BuisnessProcess
+                                {
+                                    CodeId = codeId,
+                                    ProcessId = processId,
+                                    OwnerId = ownerId
+                                };
 
-                            //Проверяем что таблица не пуста
-                            if (dbBusiness.Count != 0)
-                            {
-                                //Проверяем на дубликаты
-                                var check = dbBusiness.
-                                    Find(p => p.OwnerId == business.OwnerId
-                                              && p.CodeId == business.CodeId);
+                                var dbBusiness = db.BuisnessProcesses.ToList();
 
-                                if (check != null)
+                                //Проверяем что таблица не пуста
+                                if (dbBusiness.Count != 0)
+                                {
+                                    //Проверяем на дубликаты
+                                    var check = dbBusiness.Find(p => p.OwnerId == business.OwnerId
+                                                                     && p.CodeId == business.CodeId);
+
+                                    if (check == null)
+                                    {
+                                        db.BuisnessProcesses.Add(business);
+                                    }
+                                }
+                                else
                                 {
                                     db.BuisnessProcesses.Add(business);
                                 }
+
+                                //Сохраняем данные
+                                db.SaveChanges();
                             }
-                            else
-                            {
-                                db.BuisnessProcesses.Add(business);
-                            }
-                            //Сохраняем данные
-                            db.SaveChanges();
                         }
                     }
                 }
+                Console.WriteLine("Успешное соотношение данных связью Многие ко Многим");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
             }
         }
 
@@ -76,47 +84,58 @@ namespace TestCase.DataLoader
         /// <param name="dataList">Данные необходимые для загрузки в БД</param>
         public void AddDataToDb(List<ProcessModel> dataList)
         {
-            using (BuisnessTestContext db = new BuisnessTestContext())
+            try
             {
-                foreach (var data in dataList)
+                using (BuisnessTestContext db = new BuisnessTestContext())
                 {
-                    CodeProcess code = new CodeProcess
+                    foreach (var data in dataList)
                     {
-                        CodeName = data.CodeName
-                    };
-
-                    //Проверка на дубликаты в Code
-                    if (!db.CodeProcesses.Any(compare => compare.CodeName == code.CodeName))
-                    {
-                        db.CodeProcesses.Add(code);
-                    }
-
-                    Process process = new Process
-                    {
-                        ProcessName = data.ProcessName
-                    };
-
-                    //Проверка на дубликаты в Process
-                    if (!db.CodeProcesses.Any(compare => compare.CodeName == code.CodeName))
-                    {
-                        db.Processes.Add(process);
-                    }
-
-                    foreach (var ownerName in data.OwnerName)
-                    {
-                        OwnerProcess owner = new OwnerProcess
+                        CodeProcess code = new CodeProcess
                         {
-                            OwnerName = ownerName
+                            CodeName = data.CodeName
                         };
 
-                        //Проверка на дубликаты в Owner
-                        if (!db.OwnerProcesses.Any(compare => compare.OwnerName == owner.OwnerName))
+                        //Проверка на дубликаты в Code
+                        if (!db.CodeProcesses.Any(compare => compare.CodeName == code.CodeName))
                         {
-                            db.OwnerProcesses.Add(owner);
+                            db.CodeProcesses.Add(code);
                         }
+
+                        Process process = new Process
+                        {
+                            ProcessName = data.ProcessName
+                        };
+
+                        //Проверка на дубликаты в Process
+                        if (!db.CodeProcesses.Any(compare => compare.CodeName == code.CodeName))
+                        {
+                            db.Processes.Add(process);
+                        }
+
+                        foreach (var ownerName in data.OwnerName)
+                        {
+                            OwnerProcess owner = new OwnerProcess
+                            {
+                                OwnerName = ownerName
+                            };
+
+                            //Проверка на дубликаты в Owner
+                            if (!db.OwnerProcesses.Any(compare => compare.OwnerName == owner.OwnerName))
+                            {
+                                db.OwnerProcesses.Add(owner);
+                            }
+                        }
+
+                        db.SaveChanges();
                     }
-                    db.SaveChanges();
                 }
+                Console.WriteLine("Успешная загрузка данных в БД");
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
             }
         }
     }
