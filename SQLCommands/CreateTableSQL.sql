@@ -1,6 +1,6 @@
 Create database BuisnesTest
 
-GO --Переход к следующей интсрукции в MS SQL
+GO --need to go next request MS SQL
 
 use BuisnessTest
 
