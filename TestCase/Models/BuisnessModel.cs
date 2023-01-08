@@ -6,21 +6,9 @@ using System.Threading.Tasks;
 
 namespace TestCase.Models
 {
-    public enum ProcessOwner
-    {
-        Null = 1,
-        Retail,
-        VIP,
-        OPER,
-        Compliance,
-        CreditСommetee,
-        CORP,
-        PRO,
-        ManagementBoard,
-        StrategyCompetencyCenter
-
-    }
-    
+    /// <summary>
+    /// Модель бизнес логики для выгруженных данных из файла .xlsx и сопоставляенных между собой
+    /// </summary>
     public class ProcessModel
     {
 

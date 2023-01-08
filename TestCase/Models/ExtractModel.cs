@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace TestCase.Models
 {
+    /// <summary>
+    /// Модель данных для выгруженных данных из файла .xlsx и не сопоставленных между собой
+    /// </summary>
     public class ExtractData
     {
         

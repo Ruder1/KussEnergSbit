@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace TestCase.Models.DatabaseModels;
 
+/// <summary>
+/// Модель Базы данных для таблицы OwnerProcess
+/// </summary>
 [Table("OwnerProcess")]
 public partial class OwnerProcess
 {

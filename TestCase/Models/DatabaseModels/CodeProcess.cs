@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace TestCase.Models.DatabaseModels;
 
+/// <summary>
+/// Модель Базы данных для таблицы CodeProcess
+/// </summary>
 [Table("CodeProcess")]
 public partial class CodeProcess
 {

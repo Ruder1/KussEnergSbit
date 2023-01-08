@@ -5,6 +5,10 @@ using TestCase.Models.DatabaseModels;
 
 namespace TestCase.DataLoader;
 
+/// <summary>
+/// Данный класс сгенерирован автоматически при помощи EntityFrameWork
+/// Необходим для взаимодействия между моделью бизнес логики и моделью базы данных
+/// </summary>
 public partial class BuisnessTestContext : DbContext
 {
     public BuisnessTestContext()
