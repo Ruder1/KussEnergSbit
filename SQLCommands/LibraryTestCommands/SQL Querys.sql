@@ -1,26 +1,26 @@
-use Library
+п»їuse Library
 
---Получить список книг, написанных автором N (включая соавторство, не включая соавторство).
+--РџРѕР»СѓС‡РёС‚СЊ СЃРїРёСЃРѕРє РєРЅРёРі, РЅР°РїРёСЃР°РЅРЅС‹С… Р°РІС‚РѕСЂРѕРј N (РІРєР»СЋС‡Р°СЏ СЃРѕР°РІС‚РѕСЂСЃС‚РІРѕ, РЅРµ РІРєР»СЋС‡Р°СЏ СЃРѕР°РІС‚РѕСЂСЃС‚РІРѕ).
 
 Select Book.BookName, Author.AuthorName, Book.YearPublication 
 From Author, AuthorBook, Book
-Where Author.AuthorName = N'Автор1' AND Author.AuthorId = AuthorBook.AuthorId AND AuthorBook.BookId = Book.BookId
+Where Author.AuthorName = N'РђРІС‚РѕСЂ1' AND Author.AuthorId = AuthorBook.AuthorId AND AuthorBook.BookId = Book.BookId
 Order by Book.YearPublication
 
 
--- Получить список книг, написанные автором N в соавторстве с M.
+-- РџРѕР»СѓС‡РёС‚СЊ СЃРїРёСЃРѕРє РєРЅРёРі, РЅР°РїРёСЃР°РЅРЅС‹Рµ Р°РІС‚РѕСЂРѕРј N РІ СЃРѕР°РІС‚РѕСЂСЃС‚РІРµ СЃ M.
 
 Select Book.BookName, Book.YearPublication
 From AuthorBook
 Left Join Author On Author.AuthorId = AuthorBook.AuthorId
 Left join Book On Book.BookId = AuthorBook.BookId
-Where Author.AuthorName IN (N'Автор1', N'Автор3')
+Where Author.AuthorName IN (N'РђРІС‚РѕСЂ1', N'РђРІС‚РѕСЂ3')
 Group by Book.BookName, Book.YearPublication
 Having count(AuthorBook.BookId) > 1
 
 
 
--- Получить список книг, которые написаны 3-мя соавторами.
+-- РџРѕР»СѓС‡РёС‚СЊ СЃРїРёСЃРѕРє РєРЅРёРі, РєРѕС‚РѕСЂС‹Рµ РЅР°РїРёСЃР°РЅС‹ 3-РјСЏ СЃРѕР°РІС‚РѕСЂР°РјРё.
 
  Select Book.BookName, Author.AuthorName, Book.YearPublication
 From AuthorBook
@@ -33,7 +33,7 @@ Where  Book.BookId IN
     HAVING count(c.BookId) = 3);  
 
 
---Получить всех авторов, у которых вышло более одной книги за указанный год.
+--РџРѕР»СѓС‡РёС‚СЊ РІСЃРµС… Р°РІС‚РѕСЂРѕРІ, Сѓ РєРѕС‚РѕСЂС‹С… РІС‹С€Р»Рѕ Р±РѕР»РµРµ РѕРґРЅРѕР№ РєРЅРёРіРё Р·Р° СѓРєР°Р·Р°РЅРЅС‹Р№ РіРѕРґ.
 
 Select Book.BookName, Author.AuthorName, Book.YearPublication
 From AuthorBook
